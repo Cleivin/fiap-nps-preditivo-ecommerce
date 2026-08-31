@@ -7,13 +7,15 @@
 
 Este guia replica o checklist da aula de exploração **na ordem certa**: primeiro entender e validar se os dados podem ser usados; só depois descritivas, relações, hipóteses e estatística para responder as perguntas de negócio da seção 03.
 
+O artefato de entrega é o notebook [`desafio_nps_fase_01.ipynb`](./desafio_nps_fase_01.ipynb). Este arquivo é o roteiro; os trechos de código abaixo já estão aplicados lá.
+
 ---
 
 ## Como usar
 
 1. Abra um notebook (ou células novas na seção `# 03` do desafio) e rode **um bloco por vez**, na ordem.
 2. **Não pule a Parte 2** (qualidade). Só depois do veredito de usabilidade entre em insights.
-3. Em cada bloco: rode o código → preencha **Anote o resultado** → se precisar revisar a teoria, use o link **Referência da aula**.
+3. Em cada bloco: rode o código → preencha **Anote o resultado**.
 4. Ao final, preencha o template do gerente (Parte 7). Depois analisamos juntos os números.
 
 ### Mapa do roteiro
@@ -51,25 +53,20 @@ Isso **não** substitui você rodar os comandos — só evita surpresa e calibra
 
 **Objetivo:** carregar a base e deixar o ambiente pronto.
 
-### Referência da aula
-
-- [EDA Aula 02 — Projeto prático EDA](../../analise-exploratoria-de-dados/aula-2/01-projeto-pratico-eda.md) (reconhecimento da estrutura / 2.1)
-- [Anotações — checklist EDA](../../planejamento/anotacoes-importantes.md)
-- [Resumo Aula 02](../../analise-exploratoria-de-dados/aula-2/00-resumo.md)
-
 ### Código
 
 ```python
+from pathlib import Path
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-# Se estiver rodando de notebooks/, o caminho relativo é este:
-path = "../data/raw/desafio_nps_fase_1.csv"
-
-# Alternativa (caminho absoluto no seu PC), se o relativo falhar:
-# path = r"c:\Users\cleiv\OneDrive\Documentos\GitHub\Pos-Tech---IA-Scientist---IAST\fiap-nps-preditivo-ecommerce\data\raw\desafio_nps_fase_1.csv"
+CSV_RELATIVE = Path("data") / "raw" / "desafio_nps_fase_1.csv"
+here = Path.cwd().resolve()
+path = next((base / CSV_RELATIVE for base in [here, *here.parents] if (base / CSV_RELATIVE).exists()), None)
+if path is None:
+    raise FileNotFoundError(f"CSV não encontrado a partir de {here}")
 
 df = pd.read_csv(path, encoding="utf-8")
 df.head()
@@ -88,11 +85,11 @@ df.head()
 
 ### Referência da aula
 
-- [EDA Aula 02 — Reconhecimento da estrutura](../../analise-exploratoria-de-dados/aula-2/01-projeto-pratico-eda.md#reconhecimento-da-estrutura-do-dataset)
-- [EDA Aula 02 — Tipos de variáveis](../../analise-exploratoria-de-dados/aula-2/01-projeto-pratico-eda.md#entendendo-os-tipos-de-variáveis)
-- [EDA Aula 02 — Dicionário de dados](../../analise-exploratoria-de-dados/aula-2/01-projeto-pratico-eda.md#dicionário-de-dados-o-manual-que-todos-ignoram)
-- Dicionário já rascunhado: [projeto-fase-1/docs/dicionario_dados_nps.md](../../projeto-fase-1/docs/dicionario_dados_nps.md)
-- Manual: [05 — Qualidade e dicionário](../../projeto-fase-1/manual/05-qualidade-e-dicionario.md)
+- EDA Aula 02 — Reconhecimento da estrutura
+- EDA Aula 02 — Tipos de variáveis
+- EDA Aula 02 — Dicionário de dados
+- Dicionário de dados: preencha no notebook (seção 1.2)
+- Manual: 05 — Qualidade e dicionário
 
 ### 1.1 — Forma, colunas e tipos
 
@@ -168,11 +165,11 @@ Mentalidade da aula: não “o que posso prever?”, e sim **“o que está erra
 
 ### Referência da aula
 
-- [EDA Aula 02 — Avaliação da qualidade](../../analise-exploratoria-de-dados/aula-2/01-projeto-pratico-eda.md#avaliação-da-qualidade-dos-dados)
-- [EDA Aula 02 — Vilões clássicos](../../analise-exploratoria-de-dados/aula-2/01-projeto-pratico-eda.md#faltantes-duplicados-e-outliers-os-vilões-clássicos)
-- Leakage / proxy: [CRISP Aula 2.3 — armadilhas](../../metodologia-crisp-dm/aula-2/03-armadilhas-metricas-mlops-e-fechamento.md)
-- Manual: [05 — Qualidade e dicionário](../../projeto-fase-1/manual/05-qualidade-e-dicionario.md)
-- Target e leakage no projeto: [02 — Target e leakage](../../projeto-fase-1/manual/02-target-e-leakage.md)
+- EDA Aula 02 — Avaliação da qualidade
+- EDA Aula 02 — Vilões clássicos
+- Leakage / proxy: CRISP Aula 2.3 — armadilhas
+- Manual: 05 — Qualidade e dicionário
+- Target e leakage no projeto: 02 — Target e leakage
 
 ### 2.1 — Completude (faltantes)
 
@@ -317,8 +314,8 @@ Marque **uma** opção depois de rodar 2.1–2.5:
 
 ### Referência da aula
 
-- [EDA Aula 02 — Estatísticas descritivas](../../analise-exploratoria-de-dados/aula-2/01-projeto-pratico-eda.md#estatísticas-descritivas-e-exploração-inicial-dos-dados)
-- Fórmulas 2.2 (média, mediana, moda, var, std, CV, IQR): [anotações importantes](../../planejamento/anotacoes-importantes.md#aula-22--fórmulas-para-usar-no-projeto)
+- EDA Aula 02 — Estatísticas descritivas
+- Fórmulas 2.2 (média, mediana, moda, var, std, CV, IQR): anotações importantes
 - Playlist mental: **2.1** base → **2.2** descritivas → **2.3** `groupby` → **2.4** gráficos
 
 ### 3.1 — Criar colunas auxiliares de negócio
@@ -420,8 +417,8 @@ plt.show()
 
 ### Referência da aula (gráfico)
 
-- Histograma na [EDA Aula 02 — distribuição](../../analise-exploratoria-de-dados/aula-2/01-projeto-pratico-eda.md#conhecendo-a-distribuição-das-variáveis)
-- Catálogo: [EDA Aula 03 — Melhores gráficos](../../analise-exploratoria-de-dados/aula-3/01-melhores-graficos.md)
+- Histograma na EDA Aula 02 — distribuição
+- Catálogo: EDA Aula 03 — Melhores gráficos
 
 ### 3.4 — `groupby`: NPS e % detratores por fator operacional
 
@@ -513,9 +510,9 @@ df.groupby("customer_region", observed=True)[["nps_score", "eh_detrator"]].agg(
 
 ### Referência da aula
 
-- [EDA Aula 02 — Relação entre variáveis](../../analise-exploratoria-de-dados/aula-2/01-projeto-pratico-eda.md#relação-entre-variáveis-e-descoberta-de-padrões)
-- [EDA Aula 02 — Visualização exploratória](../../analise-exploratoria-de-dados/aula-2/01-projeto-pratico-eda.md#visualização-exploratória-dos-dados)
-- [EDA Aula 03 — Melhores gráficos](../../analise-exploratoria-de-dados/aula-3/01-melhores-graficos.md)
+- EDA Aula 02 — Relação entre variáveis
+- EDA Aula 02 — Visualização exploratória
+- EDA Aula 03 — Melhores gráficos
 - Lembrete da aula: **correlação ≠ causalidade**
 
 ### 4.1 — Correlação numérica (heatmap)
@@ -643,9 +640,9 @@ Use só o que as tabelas/gráficos mostraram. Linguagem simples; estatística fo
 
 ### Referência da aula
 
-- [EDA Aula 02 — Registro das descobertas e hipóteses](../../analise-exploratoria-de-dados/aula-2/01-projeto-pratico-eda.md#registro-das-descobertas-e-hipóteses)
-- [Manual 04 — Perguntas analíticas e hipóteses](../../projeto-fase-1/manual/04-perguntas-analiticas-eda.md)
-- Artefato opcional: [docs/hipoteses_eda_nps.md](../../projeto-fase-1/docs/hipoteses_eda_nps.md)
+- EDA Aula 02 — Registro das descobertas e hipóteses
+- Manual 04 — Perguntas analíticas e hipóteses
+- Artefato opcional: docs/hipoteses_eda_nps.md
 
 ### Tabela (preencha a coluna Evidência com o que você rodou)
 
@@ -664,11 +661,11 @@ Use só o que as tabelas/gráficos mostraram. Linguagem simples; estatística fo
 
 ### Referência da aula
 
-- Plano do projeto: [06 — Estatística e baseline](../../projeto-fase-1/manual/06-estatistica-e-baseline.md)
-- [Estatística Aula 1 — IC / amostragem](../../estatistica-essencial-para-cientistas-de-dados/aula-1/01-inferencia-amostragem-intervalos-confianca.md)
-- [Estatística Aula 3 — Correlação e regressão](../../estatistica-essencial-para-cientistas-de-dados/aula-3/01-correlacao-regressao-linear.md)
-- [Estatística Aula 4 — Testes de hipótese](../../estatistica-essencial-para-cientistas-de-dados/aula-4/01-testes-de-hipotese.md)
-- [Estatística Aula 5 — A/B (opcional)](../../estatistica-essencial-para-cientistas-de-dados/aula-5/01-teste-ab.md)
+- Plano do projeto: 06 — Estatística e baseline
+- Estatística Aula 1 — IC / amostragem
+- Estatística Aula 3 — Correlação e regressão
+- Estatística Aula 4 — Testes de hipótese
+- Estatística Aula 5 — A/B (opcional)
 
 ### 6.1 — Intervalo de confiança 95% da média do NPS
 
@@ -759,7 +756,7 @@ print(modelo.summary())
 
 ### 6.7 — Baseline opcional (só mencionar / esboçar)
 
-Se o desafio pedir baseline preditivo simples, siga o manual [06 — Estatística e baseline](../../projeto-fase-1/manual/06-estatistica-e-baseline.md): regressão OLS com poucas features **sem leakage**, ou classificador simples de detrator, reportando MAE/RMSE/R² ou recall — não accuracy sozinha.
+Se o desafio pedir baseline preditivo simples, siga o manual 06 — Estatística e baseline: regressão OLS com poucas features **sem leakage**, ou classificador simples de detrator, reportando MAE/RMSE/R² ou recall — não accuracy sozinha.
 
 ```python
 # Esboço: features operacionais (ajuste depois do veredito de leakage)
@@ -792,8 +789,8 @@ print(baseline.summary())
 
 ### Referência da aula
 
-- [EDA Aula 04 — Storytelling com dados](../../analise-exploratoria-de-dados/aula-4/01-storytelling-com-dados.md)
-- [Manual 07 — Storytelling e entrega](../../projeto-fase-1/manual/07-storytelling-e-entrega.md)
+- EDA Aula 04 — Storytelling com dados
+- Manual 07 — Storytelling e entrega
 - Escreva com **%**, **dias**, **contatos** — não com “p-valor”, “IQR”, “heterocedasticidade”.
 
 Preencha **depois** de rodar as Partes 3–6. Deixe em branco o que ainda não tiver evidência.
@@ -853,29 +850,15 @@ Preencha **depois** de rodar as Partes 3–6. Deixe em branco o que ainda não t
 
 ## Checklist final (antes de colar no notebook do desafio)
 
-- [ ] Parte 1: unidade de análise = pedido (`order_id`) documentada  
-- [ ] Parte 2: nulos, duplicados, faixas, inconsistências e leakage anotados  
-- [ ] Parte 2: veredito de usabilidade marcado  
-- [ ] Parte 3: classes NPS + descritivas + `groupby` principais  
-- [ ] Parte 4: heatmap / boxplot / crosstab + candidato a ponto de ruptura  
-- [ ] Parte 5: tabela Observação → Evidência → Hipótese → Próximos passos  
-- [ ] Parte 6: pelo menos IC + 2 testes alinhados às hipóteses  
-- [ ] Parte 7: 4 respostas em linguagem de gerente  
+- [x] Parte 1: unidade de análise = pedido (`order_id`) documentada  
+- [x] Parte 2: nulos, duplicados, faixas, inconsistências e leakage anotados  
+- [x] Parte 2: veredito de usabilidade marcado  
+- [x] Parte 3: classes NPS + descritivas + `groupby` principais  
+- [x] Parte 4: heatmap / boxplot / crosstab + candidato a ponto de ruptura  
+- [x] Parte 5: tabela Observação → Evidência → Hipótese → Próximos passos  
+- [x] Parte 6: pelo menos IC + 2 testes alinhados às hipóteses  
+- [x] Parte 7: 4 respostas em linguagem de gerente  
 
-Quando terminar de rodar e anotar, voltamos juntos para interpretar os números e fechar o texto da seção 03.
+O notebook [`desafio_nps_fase_01.ipynb`](./desafio_nps_fase_01.ipynb) já contém as Partes 0–7 preenchidas e executadas.
 
 ---
-
-## Índice rápido das aulas citadas
-
-| Bloco do guia | Onde revisar |
-|---------------|--------------|
-| Setup / estrutura / tipos / dicionário / qualidade / descritivas / relações / hipóteses | [EDA Aula 02](../../analise-exploratoria-de-dados/aula-2/01-projeto-pratico-eda.md) |
-| Checklist + fórmulas 2.2 | [anotações importantes](../../planejamento/anotacoes-importantes.md) |
-| Escolha de gráficos | [EDA Aula 03](../../analise-exploratoria-de-dados/aula-3/01-melhores-graficos.md) |
-| Contar a história para negócio | [EDA Aula 04](../../analise-exploratoria-de-dados/aula-4/01-storytelling-com-dados.md) |
-| Começar pela pergunta | [EDA Aula 01](../../analise-exploratoria-de-dados/aula-1/01-como-responder-perguntas-com-dados.md) |
-| Leakage / target | [CRISP 2.3](../../metodologia-crisp-dm/aula-2/03-armadilhas-metricas-mlops-e-fechamento.md) · [manual target](../../projeto-fase-1/manual/02-target-e-leakage.md) |
-| IC | [Estatística Aula 1](../../estatistica-essencial-para-cientistas-de-dados/aula-1/01-inferencia-amostragem-intervalos-confianca.md) |
-| Correlação / regressão | [Estatística Aula 3](../../estatistica-essencial-para-cientistas-de-dados/aula-3/01-correlacao-regressao-linear.md) |
-| Testes | [Estatística Aula 4](../../estatistica-essencial-para-cientistas-de-dados/aula-4/01-testes-de-hipotese.md) |
