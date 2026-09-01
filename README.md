@@ -7,9 +7,11 @@
 **Autor:** Cleivin Lauermann — RM376917  
 **Repositório:** [github.com/Cleivin/fiap-nps-preditivo-ecommerce](https://github.com/Cleivin/fiap-nps-preditivo-ecommerce)
 
-O projeto analisa a experiência do cliente em um e-commerce a partir do NPS e dos dados do pedido.
+## Objetivo
 
-O objetivo é identificar sinais de insatisfação **antes** da pesquisa ser respondida, para que áreas como logística, atendimento e CRM possam agir de forma preventiva.
+O projeto analisa a experiência do cliente em um e-commerce a partir do NPS e dos dados do pedido, para responder à pergunta central do case: **quais fatores operacionais realmente influenciam a satisfação do cliente?**
+
+O objetivo prático é identificar sinais de insatisfação **antes** da pesquisa ser respondida, para que áreas como logística, atendimento e CRM possam agir de forma preventiva, em vez de descobrir o problema quando o cliente já foi prejudicado.
 
 Este repositório é a **entrega** do Tech Challenge: ambiente, base e notebook autônomos. Não depende de nenhum outro repositório.
 
@@ -121,7 +123,7 @@ setup.ps1 / setup.sh                     # preparam o ambiente do zero
 .github/workflows/notebook.yml           # CI que executa o notebook a cada push
 ```
 
-## A base
+## A base de dados
 
 São 2.500 pedidos e 19 colunas em [`data/raw/desafio_nps_fase_1.csv`](data/raw/desafio_nps_fase_1.csv), sem nenhum valor nulo. Cada linha é um pedido (`order_id`, único na base) com o NPS daquele pedido — a unidade de análise é a transação, não o cliente.
 
@@ -171,6 +173,42 @@ São 2.500 pedidos e 19 colunas em [`data/raw/desafio_nps_fase_1.csv`](data/raw/
 
 Duas colunas exigem cuidado com **leakage**: `repeat_purchase_30d` só é conhecida depois da pesquisa, então não pode ser usada para prever o NPS; `csat_internal_score` só entra como preditor se o momento da coleta for conhecido. Por isso a Parte 6 do notebook fecha com um baseline sem leakage.
 
+## Metodologia
+
+A análise seguiu sete etapas, nesta ordem. A sequência importa: as hipóteses foram registradas **antes** dos testes estatísticos, para não escolher o teste depois de já ter visto o resultado.
+
+**1. Qualidade antes de insight.** Completude, duplicados, faixas de valores e consistência lógica foram verificados antes de qualquer conclusão de negócio. A base não tem nulos nem `order_id` duplicado, mas tem inconsistências lógicas.
+
+**2. Filtro explícito.** Dois critérios removeram 144 pedidos (5,8%), deixando 2.356 para a análise:
+
+- **Atendimento inconsistente** (~23 pedidos): `resolution_time_days` maior que zero e/ou `csat_internal_score` maior que zero em pedidos sem nenhum contato com o SAC e sem nenhuma reclamação. Sem canal de atendimento aberto, esses valores não têm como existir.
+- **Atraso incoerente** (~121 pedidos): `delivery_delay_days` maior que `delivery_time_days`, ou seja, atraso maior que o próprio tempo total de entrega.
+
+A opção foi documentar e remover o que é logicamente impossível, em vez de imputar valores ou corrigir as linhas.
+
+**3. Definição do alvo.** O target é o `nps_score` do pedido. Para os cortes de negócio, a nota vira classe pela régua padrão do NPS: 0 a 6 é detrator, 7 e 8 é neutro, 9 e 10 é promotor.
+
+**4. Exploração com foco em negócio.** Descritivas, cortes por faixa de atraso, de contatos no SAC, de reclamações, por região e por tempo de relacionamento, além de correlações e gráficos para localizar um possível ponto de ruptura.
+
+**5. Hipóteses registradas.** Quatro hipóteses no formato Observação, Evidência, Hipótese e Próximos passos — SAC (H1), tentativas de entrega (H2), atraso (H3) e reclamações (H4).
+
+**6. Validação estatística.** Cada hipótese foi testada com a técnica adequada ao tipo da variável, sempre sobre a base filtrada e sem usar as duas colunas com leakage:
+
+| Técnica | O que responde | Resultado |
+| --- | --- | --- |
+| IC 95% da média | Qual a nota típica da operação? | 4,45 (de 4,35 a 4,55) |
+| IC 95% da proporção | Quão grave é a taxa de detratores? | 73,5% (de 71,7% a 75,3%) |
+| ANOVA por região | A geografia muda a nota? | Não (p ≈ 0,50) |
+| t de Welch e Mann-Whitney | Atraso, reclamações e SAC separam detratores? | Sim nos três (p ≪ 0,001) |
+| t de Welch | Tentativas de entrega separam? | Não (p ≈ 0,45) |
+| Qui-quadrado | A proporção de detratores muda por faixa de atraso? | Sim (χ² ≈ 333; p ≪ 0,001) |
+| Pearson e regressão OLS | Qual a magnitude do atraso? | r ≈ −0,57; −1,03 ponto de NPS por dia; R² ≈ 0,33 |
+| Baseline OLS sem leakage | Quanto as variáveis operacionais explicam? | R² ≈ 0,47, com atraso e SAC dominando |
+
+Usar dois testes para a mesma comparação é proposital: o t de Welch trabalha com médias e o Mann-Whitney não assume normalidade, então quando os dois apontam na mesma direção o resultado não depende da forma da distribuição.
+
+**7. Tradução para o negócio.** As quatro perguntas do gerente de operações respondidas em linguagem executiva, sem jargão estatístico.
+
 ## O que o notebook cobre
 
 O notebook tem três seções, e cada pergunta do desafio tem um lugar fixo.
@@ -210,7 +248,21 @@ As quatro perguntas respondidas na Parte 7:
 3. Existe algum "ponto de ruptura" na experiência do cliente?
 4. Que tipo de cliente tende a ter NPS mais alto ou mais baixo?
 
-A análise usa a base filtrada (`df_mov_ecom_filtrado`, 2.356 pedidos) depois de remover os registros com inconsistência lógica (cerca de 5,8%).
+## Limitações e riscos
+
+O que a empresa precisa ter em mente antes de decidir com base nestes números.
+
+**É uma amostra, não a operação inteira.** São 2.356 pedidos, já sem os 144 excluídos por inconsistência. Os percentuais descrevem esta base, e não necessariamente a operação ao vivo de hoje.
+
+**Associação não é causa.** Atraso, contatos no SAC e reclamações andam juntos: o mesmo pedido problemático costuma ter os três. Os testes confirmam associação forte, e o baseline mostra cerca de um ponto de NPS perdido por dia de atraso mesmo controlando o SAC, mas isso não prova que o atraso é a única causa. Serve para priorizar a operação, não para fechar a discussão.
+
+**O NPS aqui é transacional.** Cada linha é um pedido, não um cliente. O mesmo cliente pode dar notas diferentes em pedidos diferentes, então nada aqui descreve a satisfação de um cliente ao longo do tempo.
+
+**Duas variáveis ficaram fora das recomendações.** `csat_internal_score` e `repeat_purchase_30d` são medidas depois da experiência ou são consequência dela. Elas aparecem na exploração, mas não entraram como alavanca de ação nem como preditor, porque usá-las produziria um resultado bom no papel e inútil na prática.
+
+**Nem todo achado sobreviveu ao teste.** Região e tentativas de entrega pareciam relevantes na exploração e não se sustentaram estatisticamente. Investir nesses dois pontos com base só nos gráficos seria gastar esforço onde a evidência não apoia.
+
+**O que não foi feito.** Não há modelo preditivo nesta fase — o baseline da Parte 6 é apenas uma referência do quanto as variáveis operacionais explicam a nota, não uma solução pronta para produção. A construção do modelo é o passo seguinte.
 
 ---
 
