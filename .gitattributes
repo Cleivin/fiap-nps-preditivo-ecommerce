@@ -1,0 +1,16 @@
+# Scripts de shell quebram no Linux e no macOS se forem gravados com CRLF.
+*.sh text eol=lf
+
+# O PowerShell aceita os dois, mas CRLF e o padrao do Windows.
+*.ps1 text eol=crlf
+
+# O GitHub Actions escreve os blocos "run" em arquivos de shell no runner,
+# entao o workflow tambem precisa de LF.
+*.yml text eol=lf
+*.yaml text eol=lf
+
+*.ipynb text eol=lf
+
+# Mantidos como estao, sem normalizacao de quebras de linha.
+*.csv -text
+*.pptx binary

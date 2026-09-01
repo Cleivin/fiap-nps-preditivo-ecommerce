@@ -1,13 +1,23 @@
-# Ambiente local — Tech Challenge NPS (Fase 1)
-# Python 3.11+ (testado com 3.14)
+# Tech Challenge NPS (Fase 1) - dependencias do projeto
+# Requer Python 3.11 ou superior.
+# Versoes fixas: sao exatamente as usadas para executar o notebook da entrega.
 
-pandas>=2.2
-numpy>=2.0
-matplotlib>=3.8
-seaborn>=0.13
-scipy>=1.11
-statsmodels>=0.14
-scikit-learn>=1.4
-jupyterlab>=4.0
-ipykernel>=6.29
-openpyxl>=3.1
+# Analise de dados
+pandas==3.0.5
+numpy==2.5.2
+
+# Visualizacao
+matplotlib==3.11.1
+seaborn==0.13.2
+
+# Estatistica
+scipy==1.18.1
+statsmodels==0.15.0
+
+# Ambiente Jupyter
+jupyterlab==4.6.3
+ipykernel==7.3.0
+
+# ipykernel e nbconvert importam packaging sem declara-lo como dependencia,
+# entao numa instalacao limpa ele precisa vir explicito daqui.
+packaging==26.3

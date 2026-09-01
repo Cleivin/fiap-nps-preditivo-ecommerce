@@ -1,0 +1,95 @@
+name: Notebook
+
+# Prova, a cada push, que dá para clonar o repositório numa máquina limpa,
+# instalar as dependências e executar o notebook do começo ao fim.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+env:
+  # Sem isso o matplotlib tenta abrir uma janela e trava no runner headless.
+  MPLBACKEND: Agg
+
+jobs:
+  executar-notebook:
+    name: Notebook (${{ matrix.os }}, Python ${{ matrix.python-version }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python-version: ["3.11", "3.12", "3.13", "3.14"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: requirements.txt
+
+      - name: Instalar as dependências
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+
+      - name: Conferir as versões instaladas
+        run: python -c "import pandas, numpy, matplotlib, seaborn, scipy, statsmodels; print(pandas.__version__, numpy.__version__, scipy.__version__, statsmodels.__version__)"
+
+      - name: Executar o notebook do início ao fim
+        run: >
+          python -m jupyter nbconvert
+          --to notebook
+          --execute
+          --output-dir build
+          notebooks/desafio_nps_fase_01.ipynb
+
+      - name: Guardar o notebook executado quando algo falhar
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: notebook-${{ matrix.os }}-py${{ matrix.python-version }}
+          path: build/
+          if-no-files-found: ignore
+
+  scripts-de-setup:
+    name: Script de setup (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Rodar o setup.sh
+        if: runner.os != 'Windows'
+        run: bash setup.sh
+
+      - name: Rodar o setup.ps1
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: ./setup.ps1
+
+      - name: Conferir que o kernel foi registrado
+        shell: bash
+        run: |
+          if [ "$RUNNER_OS" = "Windows" ]; then
+            PY=".venv/Scripts/python.exe"
+          else
+            PY=".venv/bin/python"
+          fi
+          "$PY" -m jupyter kernelspec list | grep nps-fase1

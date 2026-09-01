@@ -1,9 +1,24 @@
+# Ambiente virtual (cada maquina cria o seu com setup.ps1 / setup.sh)
 .venv/
-.vscode/
+venv/
+
+# Python
 __pycache__/
 *.py[cod]
-.ipynb_checkpoints/
-.DS_Store
 *.egg-info/
 .pytest_cache/
 .mypy_cache/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Saida da execucao de validacao do notebook (local e CI)
+build/
+
+# Script gerador da apresentacao: depende de python-pptx e lxml,
+# que ficam fora das dependencias do projeto. So o .pptx final e versionado.
+apresentacao/build_pptx.py
+
+# Sistema operacional
+.DS_Store
+Thumbs.db

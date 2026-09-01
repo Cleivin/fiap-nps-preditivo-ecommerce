@@ -642,7 +642,6 @@ Use só o que as tabelas/gráficos mostraram. Linguagem simples; estatística fo
 
 - EDA Aula 02 — Registro das descobertas e hipóteses
 - Manual 04 — Perguntas analíticas e hipóteses
-- Artefato opcional: docs/hipoteses_eda_nps.md
 
 ### Tabela (preencha a coluna Evidência com o que você rodou)
 
