@@ -14,7 +14,7 @@ Este repositório é a **entrega** do Tech Challenge: ambiente, base e notebook 
 
 | Ferramenta | Versão | Como instalar |
 | --- | --- | --- |
-| Python | 3.11 ou superior | [python.org/downloads](https://www.python.org/downloads/) — no Windows, marque a opção **Add Python to PATH** |
+| Python | 3.12 ou superior | [python.org/downloads](https://www.python.org/downloads/) — no Windows, marque a opção **Add Python to PATH** |
 | Git | qualquer | [git-scm.com/downloads](https://git-scm.com/downloads) |
 
 Não é preciso instalar mais nada: a base de dados já vem junto com o repositório e todas as bibliotecas são instaladas dentro de um ambiente virtual isolado, sem mexer no Python do sistema.
@@ -117,7 +117,9 @@ A análise usa a base filtrada (`df_mov_ecom_filtrado`, 2.356 pedidos) depois de
 
 O `requirements.txt` fixa as versões exatas (`==`) que foram usadas para gerar os resultados da entrega. Com faixas abertas como `pandas>=2.2`, uma instalação futura poderia trazer uma versão com comportamento diferente e produzir números que não batem com os do notebook.
 
-Para garantir que isso não é só teoria, o GitHub Actions clona o repositório limpo, instala as dependências e executa o notebook inteiro em **Windows, macOS e Linux**, com **Python 3.11, 3.12, 3.13 e 3.14** — além de rodar os próprios scripts de setup nos três sistemas. O selo no topo deste README mostra o resultado da última execução.
+Para garantir que isso não é só teoria, o GitHub Actions clona o repositório limpo, instala as dependências e executa o notebook inteiro em **Windows, macOS e Linux**, com **Python 3.12, 3.13 e 3.14** — além de rodar os próprios scripts de setup nos três sistemas. O selo no topo deste README mostra o resultado da última execução.
+
+O piso é o Python 3.12 porque as versões de `numpy` e `scipy` usadas na entrega não suportam a 3.11. Preferimos manter as bibliotecas exatamente nas versões que geraram os resultados a rebaixá-las para alcançar uma versão mais antiga do Python.
 
 ## Solução de problemas
 

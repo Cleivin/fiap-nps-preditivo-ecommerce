@@ -1,5 +1,5 @@
 # Tech Challenge NPS (Fase 1) - dependencias do projeto
-# Requer Python 3.11 ou superior.
+# Requer Python 3.12 ou superior (numpy 2.5.2 e scipy 1.18.1 nao suportam 3.11).
 # Versoes fixas: sao exatamente as usadas para executar o notebook da entrega.
 
 # Analise de dados

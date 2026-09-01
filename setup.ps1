@@ -35,7 +35,7 @@ function Find-Python {
         }
 
         if ($LASTEXITCODE -ne 0 -or -not $versao) { continue }
-        if ([Version]$versao -ge [Version]"3.11") { return $candidato }
+        if ([Version]$versao -ge [Version]"3.12") { return $candidato }
     }
     return $null
 }
@@ -80,7 +80,7 @@ function Test-VenvSaudavel {
 
 $python = Find-Python
 if (-not $python) {
-    Write-Error "Nenhum Python 3.11 ou superior encontrado. Instale em https://www.python.org/downloads/ e rode o script de novo."
+    Write-Error "Nenhum Python 3.12 ou superior encontrado. Instale em https://www.python.org/downloads/ e rode o script de novo."
 }
 
 $exe = $python[0]

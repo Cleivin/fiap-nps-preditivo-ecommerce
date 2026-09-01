@@ -15,11 +15,11 @@ PYTHON_VENV="$VENV/bin/python"
 # escolheu (pyenv, conda, asdf). Os nomes com versao sao o plano B para
 # sistemas cujo python3 padrao ainda e antigo demais.
 encontrar_python() {
-    for candidato in python3 python python3.14 python3.13 python3.12 python3.11; do
+    for candidato in python3 python python3.14 python3.13 python3.12; do
         if ! command -v "$candidato" >/dev/null 2>&1; then
             continue
         fi
-        if "$candidato" -c 'import sys; sys.exit(0 if sys.version_info >= (3, 11) else 1)' 2>/dev/null; then
+        if "$candidato" -c 'import sys; sys.exit(0 if sys.version_info >= (3, 12) else 1)' 2>/dev/null; then
             echo "$candidato"
             return 0
         fi
@@ -28,7 +28,7 @@ encontrar_python() {
 }
 
 if ! PYTHON=$(encontrar_python); then
-    echo "Erro: nenhum Python 3.11 ou superior encontrado." >&2
+    echo "Erro: nenhum Python 3.12 ou superior encontrado." >&2
     echo "Instale com 'brew install python' (macOS) ou pelo gerenciador de pacotes da sua distribuicao." >&2
     exit 1
 fi
