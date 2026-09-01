@@ -8,6 +8,14 @@ O objetivo é identificar sinais de insatisfação **antes** da pesquisa ser res
 
 Este repositório é a **entrega** do Tech Challenge: ambiente, base e notebook autônomos. Não depende de nenhum outro repositório.
 
+## Vídeo da entrega
+
+A apresentação em vídeo que faz parte da entrega está no YouTube:
+
+[![Vídeo da entrega — NPS Preditivo (Fase 1)](https://img.youtube.com/vi/cUDiVQGjfMM/maxresdefault.jpg)](https://youtu.be/cUDiVQGjfMM)
+
+[Assistir no YouTube](https://youtu.be/cUDiVQGjfMM)
+
 ---
 
 ## Pré-requisitos

@@ -16,8 +16,9 @@ __pycache__/
 build/
 
 # Script gerador da apresentacao: depende de python-pptx e lxml,
-# que ficam fora das dependencias do projeto. So o .pptx final e versionado.
+# que ficam fora das dependencias do projeto. O .pptx final vai para o git.
 apresentacao/build_pptx.py
+!apresentacao/*.pptx
 
 # Sistema operacional
 .DS_Store
